@@ -1,4 +1,4 @@
- " === General Settings ===
+" === General Settings ===
 set nocompatible            " Disable compatibility with old vi (modern features enabled)
 set showmatch               " Highlight matching parentheses, brackets, etc.
 set ignorecase              " Make searches case-insensitive by default
@@ -62,15 +62,20 @@ Plug 'williamboman/mason.nvim'
 Plug 'williamboman/mason-lspconfig.nvim'
 Plug 'tpope/vim-fugitive'
 Plug 'kylechui/nvim-surround'
+Plug 'mg979/vim-visual-multi', {'branch': 'master'}
+Plug 'folke/trouble.nvim'
+Plug 'mfussenegger/nvim-dap'
+Plug 'mfussenegger/nvim-dap-python'
+Plug 'ThePrimeagen/harpoon'
+Plug 'echasnovski/mini.nvim', {'branch': 'stable'}
+Plug 'folke/zen-mode.nvim'
 
 " === New Plugins ===
-Plug 'mg979/vim-visual-multi', {'branch': 'master'}    " Multiple cursors/selections
-Plug 'folke/trouble.nvim'                              " Diagnostics and quickfix UI
-Plug 'mfussenegger/nvim-dap'                           " Debugging support (DAP)
-Plug 'mfussenegger/nvim-dap-python'                    " Python DAP extension
-Plug 'ThePrimeagen/harpoon'                            " Quick file navigation
-Plug 'echasnovski/mini.nvim', {'branch': 'stable'}     " Collection of mini enhancements
-Plug 'folke/zen-mode.nvim'                             " Distraction-free editing
+Plug 'vim-test/vim-test'
+Plug 'ahmedkhalf/project.nvim'
+Plug 'ggandor/leap.nvim'
+Plug 'nvim-tree/nvim-tree.lua'
+Plug 'arkav/lualine-lsp-progress'
 
 call plug#end()
 
@@ -122,7 +127,7 @@ require('nvim-treesitter.configs').setup {
 }
 EOF
 
-" === Lualine Configuration ===
+" === Lualine Configuration with LSP Progress ===
 lua << EOF
 require('lualine').setup {
   options = {
@@ -135,7 +140,8 @@ require('lualine').setup {
     lualine_b = {'branch', 'diff', {'diagnostics', sources = {'nvim_lsp'}}},
     lualine_c = {
       'filename',
-      function() return vim.lsp.get_active_clients()[1] and vim.lsp.get_active_clients()[1].name or '' end
+      function() return vim.lsp.get_active_clients()[1] and vim.lsp.get_active_clients()[1].name or '' end,
+      'lsp_progress',
     },
     lualine_x = {'encoding', 'fileformat', 'filetype'},
     lualine_y = {'progress'},
@@ -211,7 +217,7 @@ require('nvim-surround').setup()
 EOF
 
 " === vim-visual-multi Configuration ===
-" No Lua config needed; uses default keybindings (<Ctrl-N>, <Ctrl-Down>)
+" No Lua config needed; uses default bindings
 
 " === trouble.nvim Configuration ===
 lua << EOF
@@ -242,7 +248,7 @@ dap.configurations.cpp = {
   },
 }
 dap.configurations.c = dap.configurations.cpp
-require('dap-python').setup('python')  -- Python debugging with debugpy
+require('dap-python').setup('python')
 EOF
 
 " === harpoon Configuration ===
@@ -265,11 +271,45 @@ require("zen-mode").setup {
 }
 EOF
 
+" === vim-test Configuration ===
+let test#strategy = "neovim"
+nnoremap <leader>tn :TestNearest<CR>
+nnoremap <leader>tf :TestFile<CR>
+nnoremap <leader>ts :TestSuite<CR>
+
+" === project.nvim Configuration ===
+lua << EOF
+require("project_nvim").setup {
+  detection_methods = { "lsp", "pattern" },
+  patterns = { ".git", "Makefile", "Cargo.toml" },
+}
+require('telescope').load_extension('projects')
+EOF
+
+" === leap.nvim Configuration ===
+lua << EOF
+require('leap').add_default_mappings(false)  -- Disable default mappings to avoid conflicts
+vim.keymap.set({'n', 'x', 'o'}, 'z',  '<Plug>(leap-forward)')  -- Use z for forward jump
+vim.keymap.set({'n', 'x', 'o'}, 'Z',  '<Plug>(leap-backward)')  -- Use Z for backward jump
+EOF
+
+" === nvim-tree.lua Configuration ===
+lua << EOF
+require("nvim-tree").setup {
+  view = {
+    width = 30,
+  },
+  git = {
+    enable = true,
+  },
+}
+EOF
+
 " === Custom Keybindings ===
 nnoremap <C-a> ggVG
 nnoremap <leader>ff <cmd>Telescope find_files<CR>
 nnoremap <leader>fg <cmd>Telescope live_grep<CR>
-nnoremap <leader>n <cmd>NERDTreeToggle<CR>
+nnoremap <leader>n <cmd>NvimTreeToggle<CR>
 nnoremap <leader>gs <cmd>Git<CR>
 nnoremap <leader>t <cmd>Trouble diagnostics<CR>
 nnoremap <leader>db <cmd>lua require('dap').toggle_breakpoint()<CR>
@@ -278,4 +318,5 @@ nnoremap <leader>ha <cmd>lua require('harpoon.mark').add_file()<CR>
 nnoremap <leader>hm <cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>
 nnoremap <leader>1 <cmd>lua require('harpoon.ui').nav_file(1)<CR>
 nnoremap <leader>2 <cmd>lua require('harpoon.ui').nav_file(2)<CR>
-nnoremap <leader>z <cmd>ZenMode<CR>             " Open Fugitive Git status
+nnoremap <leader>z <cmd>ZenMode<CR>
+nnoremap <leader>fp <cmd>Telescope projects<CR>

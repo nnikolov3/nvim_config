@@ -1,6 +1,6 @@
 # Neovim Hotkeys and Functionality Guide
 
-This guide covers the keybindings and features of your Neovim setup as of your latest `init.vim`. It includes plugins for LSP, formatting, debugging, navigation, and more. Your leader key is `<Space>` (set with `let mapleader = " "`).
+This guide covers the keybindings and features of your Neovim setup as of your latest `init.vim`. It includes plugins for LSP, formatting, debugging, navigation, Git integration, testing, and more. Your leader key is `<Space>` (set with `let mapleader = " "`).
 
 ---
 
@@ -27,6 +27,7 @@ This guide covers the keybindings and features of your Neovim setup as of your l
 
 ### Features
 - Inline diagnostics (errors/warnings) shown via `virtual_text` and `signcolumn`.
+- LSP progress shown in statusline (via `lualine-lsp-progress`).
 
 ---
 
@@ -59,20 +60,23 @@ This guide covers the keybindings and features of your Neovim setup as of your l
 ### Hotkeys
 - `<Space>ff`: **Find Files** - Search and open files in current directory.
 - `<Space>fg`: **Live Grep** - Search text across all files.
+- `<Space>fp`: **Find Projects** - List and switch between projects (via `project.nvim`).
 
 ### Features
 - Fast, interactive UI for navigation.
+- Project-aware file finding (via `project.nvim`).
 
 ---
 
-## File Explorer (nerdtree)
-- **Purpose**: Tree-style file explorer.
+## File Explorer (nvim-tree.lua)
+- **Purpose**: Modern tree-style file explorer (replaces NERDTree).
 
 ### Hotkeys
-- `<Space>n`: **Toggle NERDTree** - Show/hide file explorer.
+- `<Space>n`: **Toggle NvimTree** - Show/hide file explorer.
 
 ### Features
 - Navigate filesystem with arrow keys or mouse.
+- Shows Git status for files.
 
 ---
 
@@ -199,12 +203,51 @@ This guide covers the keybindings and features of your Neovim setup as of your l
 
 ---
 
+## Testing (vim-test)
+- **Purpose**: Run tests directly from Neovim.
+- **Frameworks**: pytest (Python), Cargo (Rust), Google Test (C++).
+
+### Hotkeys
+- `<Space>tn`: **Test Nearest** - Run test under cursor.
+- `<Space>tf`: **Test File** - Run all tests in current file.
+- `<Space>ts`: **Test Suite** - Run entire test suite.
+
+### Features
+- Runs in Neovim terminal (via `test#strategy = "neovim"`).
+
+---
+
+## Project Management (project.nvim)
+- **Purpose**: Detect and manage projects, integrate with Telescope.
+
+### Hotkeys
+- `<Space>fp`: **Find Projects** - List and switch between projects.
+
+### Features
+- Auto-detects projects via LSP or patterns (e.g., `.git`, `Cargo.toml`).
+
+---
+
+## Fast Navigation (leap.nvim)
+- **Purpose**: Jump to any visible location with minimal keystrokes.
+
+### Hotkeys
+- `z<char><char>`: **Jump Forward** - Jump to the first occurrence of the two characters (e.g., `zab` jumps to "ab").
+- `Z<char><char>`: **Jump Backward** - Jump to the previous occurrence.
+
+### Features
+- Works in normal, visual, and operator-pending modes.
+- Highlights jump targets for easy selection.
+
+---
+
 ## Learning Tips
 1. **Explore with Which-Key**: Press `<Space>` and wait to see available bindings (via `which-key.nvim`).
 2. **Practice Debugging**: Set a breakpoint (`<Space>db`), start with `<Space>dc`, and use `:Dap` commands.
 3. **Format on Save**: Test `conform.nvim` by editing and saving files.
 4. **Multi-Cursor**: Try `<Ctrl-N>` on a repeated word, then edit all instances.
 5. **Git Workflow**: Use `<Space>gs` for status, then `:Git commit`.
+6. **Test Automation**: Run tests with `<Space>tn` or `<Space>tf` to verify code changes.
 
 ---
 
@@ -212,5 +255,6 @@ This guide covers the keybindings and features of your Neovim setup as of your l
 - Adjust keybindings in `init.vim` if conflicts arise (e.g., change `<Space>t` to `<Space>d`).
 - Add more DAP configs (e.g., Rust with `lldb`) as needed.
 - Experiment with `mini.nvim` modules (e.g., `mini.statusline`).
+- Replace `NERDTree` with `nvim-tree.lua` by removing `Plug 'preservim/nerdtree'`.
 
 Happy coding!

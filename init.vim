@@ -25,6 +25,9 @@ set encoding=utf-8          " Use UTF-8 encoding for files
 set nobackup                " Disable backup files
 set nowritebackup           " Disable backup before overwriting files
 set signcolumn=yes          " Always show the sign column (for diagnostics, git signs, etc.)
+set updatetime=2000         " Set update time to 2 seconds for autosave
+set statusline+=%m          " Show modified flag in status line
+set confirm                 " Prevent accidental quits with unsaved changes
 
 " === Leader Key ===
 let mapleader = " "          " Set leader key to Space (improves ergonomics for keybindings)
@@ -76,6 +79,11 @@ Plug 'ahmedkhalf/project.nvim'
 Plug 'ggandor/leap.nvim'
 Plug 'nvim-tree/nvim-tree.lua'
 Plug 'arkav/lualine-lsp-progress'
+
+" === Added Plugins ===
+Plug 'Pocco81/auto-save.nvim'           " Autosave functionality
+Plug 'akinsho/bufferline.nvim'          " Buffer tabs integration
+Plug 'folke/persistence.nvim'           " Session management
 
 call plug#end()
 
@@ -176,6 +184,10 @@ require("conform").setup {
   },
   format_on_save = {
     timeout_ms = 500,
+    lsp_fallback = true,
+  },
+  notify_on_error = true,
+  format_after_save = {
     lsp_fallback = true,
   },
 }
@@ -305,6 +317,39 @@ require("nvim-tree").setup {
 }
 EOF
 
+" === auto-save.nvim Configuration ===
+lua << EOF
+require("auto-save").setup {
+  enabled = true,
+  execution_message = {
+    message = function() return "AutoSave: saved at " .. vim.fn.strftime("%H:%M:%S") end,
+    dim = 0.18,
+    cleaning_interval = 1250,
+  },
+  trigger_events = {"InsertLeave", "TextChanged"},
+  write_all_buffers = false,
+  debounce_delay = 135,
+}
+EOF
+
+" === bufferline.nvim Configuration ===
+lua << EOF
+require("bufferline").setup {
+  options = {
+    diagnostics = "nvim_lsp",
+    offsets = {{filetype = "NvimTree", text = "File Explorer"}},
+  },
+}
+EOF
+
+" === persistence.nvim Configuration ===
+lua << EOF
+require("persistence").setup {
+  dir = vim.fn.expand(vim.fn.stdpath("state") .. "/sessions/"),
+  options = {"buffers", "curdir", "tabpages", "winsize"}
+}
+EOF
+
 " === Custom Keybindings ===
 nnoremap <C-a> ggVG
 nnoremap <leader>ff <cmd>Telescope find_files<CR>
@@ -320,3 +365,6 @@ nnoremap <leader>1 <cmd>lua require('harpoon.ui').nav_file(1)<CR>
 nnoremap <leader>2 <cmd>lua require('harpoon.ui').nav_file(2)<CR>
 nnoremap <leader>z <cmd>ZenMode<CR>
 nnoremap <leader>fp <cmd>Telescope projects<CR>
+nnoremap <leader>b <cmd>BufferLinePick<CR>          " Bufferline pick buffer
+nnoremap <leader>ss <cmd>lua require('persistence').load()<CR>          " Restore session
+nnoremap <leader>sl <cmd>lua require('persistence').load({last=true})<CR>  " Restore last session

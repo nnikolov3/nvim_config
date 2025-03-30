@@ -1,13 +1,13 @@
 # Neovim Hotkeys and Functionality Guide
 
-This guide covers the keybindings and features of your Neovim setup as of your latest `init.vim`. It includes plugins for LSP, formatting, debugging, navigation, Git integration, testing, and more. Your leader key is `<Space>` (set with `let mapleader = " "`).
+This guide covers the keybindings and features of your Neovim setup as of your latest `init.vim`. It includes plugins for LSP, formatting, debugging, navigation, Git integration, testing, autosave, buffer management, session persistence, and more. Your leader key is `<Space>` (set with `let mapleader = " "`).
 
 ---
 
 ## General Neovim Hotkeys
 - `<C-a>`: **Select All** - Visually select entire buffer (`ggVG`).
-- `:w`: Save file.
-- `:q`: Quit.
+- `:w`: Save file (rarely needed due to autosave).
+- `:q`: Quit (prompts confirmation if unsaved changes exist).
 - `/<pattern>`: Search (with `hlsearch` and `incsearch` enabled).
 - `n`/`N`: Next/previous search match.
 
@@ -26,8 +26,8 @@ This guide covers the keybindings and features of your Neovim setup as of your l
 - `]d`: **Next Diagnostic** - Jump to next error/warning.
 
 ### Features
-- Inline diagnostics (errors/warnings) shown via `virtual_text` and `signcolumn`.
-- LSP progress shown in statusline (via `lualine-lsp-progress`).
+- Inline diagnostics shown via `virtual_text` and `signcolumn`.
+- LSP progress displayed in statusline (via `lualine-lsp-progress`).
 
 ---
 
@@ -40,7 +40,17 @@ This guide covers the keybindings and features of your Neovim setup as of your l
 - `<C-p>`: Previous completion item.
 
 ### Features
-- Autocompletion triggered as you type (powered by LSP).
+- Autocompletion triggered as you type, powered by LSP sources.
+
+---
+
+## Autosave (auto-save.nvim)
+- **Purpose**: Automatically save changes to avoid data loss.
+
+### Features
+- Saves on `InsertLeave` and `TextChanged` events.
+- 135ms debounce delay to prevent excessive writes.
+- Displays "AutoSave: saved at HH:MM:SS" in statusline.
 
 ---
 
@@ -51,11 +61,12 @@ This guide covers the keybindings and features of your Neovim setup as of your l
 ### Features
 - Formats on save with 500ms timeout.
 - Falls back to LSP formatting if the tool fails.
+- Error notifications enabled.
 
 ---
 
 ## File Navigation (telescope.nvim)
-- **Purpose**: Fuzzy finding for files, text, and more.
+- **Purpose**: Fuzzy finding for files, text, and projects.
 
 ### Hotkeys
 - `<Space>ff`: **Find Files** - Search and open files in current directory.
@@ -63,20 +74,45 @@ This guide covers the keybindings and features of your Neovim setup as of your l
 - `<Space>fp`: **Find Projects** - List and switch between projects (via `project.nvim`).
 
 ### Features
-- Fast, interactive UI for navigation.
-- Project-aware file finding (via `project.nvim`).
+- Fast, interactive UI with Telescope integration.
+- Project-aware navigation (via `project.nvim`).
 
 ---
 
 ## File Explorer (nvim-tree.lua)
-- **Purpose**: Modern tree-style file explorer (replaces NERDTree).
+- **Purpose**: Modern tree-style file explorer.
 
 ### Hotkeys
 - `<Space>n`: **Toggle NvimTree** - Show/hide file explorer.
 
 ### Features
-- Navigate filesystem with arrow keys or mouse.
-- Shows Git status for files.
+- Navigate with arrow keys or mouse.
+- Git status integration for files.
+
+---
+
+## Buffer Management (bufferline.nvim)
+- **Purpose**: Visual buffer tabs with diagnostics.
+
+### Hotkeys
+- `<Space>b`: **Pick Buffer** - Select a buffer from the tabline.
+
+### Features
+- Shows LSP diagnostics in tabs.
+- Offsets for NvimTree integration.
+
+---
+
+## Session Management (persistence.nvim)
+- **Purpose**: Save and restore editing sessions.
+
+### Hotkeys
+- `<Space>ss`: **Restore Session** - Load session for current directory.
+- `<Space>sl`: **Restore Last Session** - Load most recent session.
+
+### Features
+- Saves buffers, cursor positions, tabs, and window sizes.
+- Stores sessions in `~/.local/state/nvim/sessions/`.
 
 ---
 
@@ -96,7 +132,7 @@ This guide covers the keybindings and features of your Neovim setup as of your l
 #### Hotkeys (Defaults)
 - `[c`: Previous hunk.
 - `]c`: Next hunk.
-- `<Space>hb`: **Blame** - Show line blame (toggle with `:Gitsigns toggle_current_line_blame`).
+- `<Space>hb`: **Blame** - Toggle line blame (via `:Gitsigns toggle_current_line_blame`).
 
 #### Features
 - Signs in `signcolumn`: `+` (added), `~` (changed), `_` (deleted).
@@ -125,7 +161,7 @@ This guide covers the keybindings and features of your Neovim setup as of your l
 - `ds<char>`: **Delete Surround** - Remove surrounding char (e.g., `ds"` removes quotes).
 
 ### Features
-- Works with any pair (parentheses, tags, etc.).
+- Supports any pair (parentheses, tags, etc.).
 
 ---
 
@@ -133,12 +169,12 @@ This guide covers the keybindings and features of your Neovim setup as of your l
 - **Purpose**: Edit multiple locations simultaneously.
 
 ### Hotkeys
-- `<Ctrl-N>`: **Start Multi-Cursor** - Select word under cursor, press again to add more occurrences.
+- `<Ctrl-N>`: **Start Multi-Cursor** - Select word under cursor, press again for more occurrences.
 - `<Ctrl-Down>`/`<Ctrl-Up>`: Add cursor below/above.
 - `<Tab>`: Switch between cursor and selection modes.
 
 ### Features
-- Type once, apply everywhere selected.
+- Type once, apply to all selected locations.
 
 ---
 
@@ -232,29 +268,29 @@ This guide covers the keybindings and features of your Neovim setup as of your l
 - **Purpose**: Jump to any visible location with minimal keystrokes.
 
 ### Hotkeys
-- `z<char><char>`: **Jump Forward** - Jump to the first occurrence of the two characters (e.g., `zab` jumps to "ab").
-- `Z<char><char>`: **Jump Backward** - Jump to the previous occurrence.
+- `z<char><char>`: **Jump Forward** - Jump to first occurrence of two characters (e.g., `zab` jumps to "ab").
+- `Z<char><char>`: **Jump Backward** - Jump to previous occurrence.
 
 ### Features
 - Works in normal, visual, and operator-pending modes.
-- Highlights jump targets for easy selection.
+- Highlights jump targets for selection.
 
 ---
 
 ## Learning Tips
 1. **Explore with Which-Key**: Press `<Space>` and wait to see available bindings (via `which-key.nvim`).
-2. **Practice Debugging**: Set a breakpoint (`<Space>db`), start with `<Space>dc`, and use `:Dap` commands.
-3. **Format on Save**: Test `conform.nvim` by editing and saving files.
-4. **Multi-Cursor**: Try `<Ctrl-N>` on a repeated word, then edit all instances.
-5. **Git Workflow**: Use `<Space>gs` for status, then `:Git commit`.
-6. **Test Automation**: Run tests with `<Space>tn` or `<Space>tf` to verify code changes.
+2. **Leverage Autosave**: Edit freely; `auto-save.nvim` handles saving (check statusline for confirmation).
+3. **Manage Buffers**: Use `<Space>b` to switch buffers visually with `bufferline.nvim`.
+4. **Restore Sessions**: Use `<Space>ss` or `<Space>sl` to pick up where you left off.
+5. **Practice Debugging**: Set a breakpoint (`<Space>db`), start with `<Space>dc`, explore `:Dap` commands.
+6. **Format on Save**: Test `conform.nvim` by editing and saving files.
+7. **Multi-Cursor**: Try `<Ctrl-N>` on a repeated word, then edit all instances.
+8. **Git Workflow**: Use `<Space>gs` for status, then `:Git commit`.
 
 ---
 
 ## Customization
 - Adjust keybindings in `init.vim` if conflicts arise (e.g., change `<Space>t` to `<Space>d`).
-- Add more DAP configs (e.g., Rust with `lldb`) as needed.
+- Add DAP configs (e.g., Rust with `lldb`) in the `nvim-dap` section.
 - Experiment with `mini.nvim` modules (e.g., `mini.statusline`).
-- Replace `NERDTree` with `nvim-tree.lua` by removing `Plug 'preservim/nerdtree'`.
-
-Happy coding!
+- Remove legacy `NERDTree` (`Plug 'preservim/nerdtree'`) since `nvim-tree.lua` is active.

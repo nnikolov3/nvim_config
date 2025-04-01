@@ -137,6 +137,30 @@ require('nvim-treesitter.configs').setup {
 }
 EOF
 
+" === Autoclose Configuration ===
+lua << EOF
+require('autoclose').setup {
+  keys = {
+    ["("] = { escape = false, close = true, pair = "()" },
+    ["["] = { escape = false, close = true, pair = "[]" },
+    ["{"] = { escape = false, close = true, pair = "{}" },
+    ["<"] = { escape = false, close = true, pair = "<>" },
+    ['"'] = { escape = true, close = true, pair = '""' },
+    ["'"] = { escape = true, close = true, pair = "''" },
+    ["`"] = { escape = true, close = true, pair = "``" },
+  },
+  options = {
+    disable_when_touch = false,
+    pair_spaces = true,
+  },
+}
+EOF
+
+" === Custom Highlighting for Braces ===
+highlight MatchParen guifg=#fabd2f guibg=NONE gui=bold  " Matching braces (yellow, bold)
+highlight TSOperator guifg=#d3869b                    " Curly braces in Rust (pinkish)
+autocmd FileType rust highlight TSOperator guifg=#d3869b  " Ensure Rust-specific override
+
 " === Lualine Configuration with LSP Progress ===
 lua << EOF
 require('lualine').setup {

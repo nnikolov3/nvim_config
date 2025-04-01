@@ -126,14 +126,6 @@ require('rust-tools').setup({
 })
 EOF
 
-" === LSP Keybindings ===
-nnoremap <silent> gd <cmd>lua vim.lsp.buf.definition()<CR>
-nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
-nnoremap <silent> <leader>rn <cmd>lua vim.lsp.buf.rename()<CR>
-nnoremap <silent> <leader>ca <cmd>lua vim.lsp.buf.code_action()<CR>
-nnoremap <silent> [d <cmd>lua vim.diagnostic.goto_prev()<CR>
-nnoremap <silent> ]d <cmd>lua vim.diagnostic.goto_next()<CR>
-
 " === Diagnostics Display ===
 lua vim.diagnostic.config({ virtual_text = true, signs = true })
 
@@ -191,6 +183,7 @@ require("conform").setup {
     cpp = { "clang-format" },
     rust = { "rustfmt" },
     python = { "black" },
+    toml = { "taplo" },
   },
   format_on_save = {
     timeout_ms = 500,
@@ -312,9 +305,6 @@ EOF
 
 " === vim-test Configuration ===
 let test#strategy = "neovim"
-nnoremap <leader>tn :TestNearest<CR>
-nnoremap <leader>tf :TestFile<CR>
-nnoremap <leader>ts :TestSuite<CR>
 
 " === project.nvim Configuration ===
 lua << EOF
@@ -377,21 +367,67 @@ require("persistence").setup {
 }
 EOF
 
-" === Custom Keybindings ===
-nnoremap <C-a> ggVG
-nnoremap <leader>ff <cmd>Telescope find_files<CR>
-nnoremap <leader>fg <cmd>Telescope live_grep<CR>
-nnoremap <leader>n <cmd>NvimTreeToggle<CR>
-nnoremap <leader>gs <cmd>Git<CR>
-nnoremap <leader>t <cmd>Trouble diagnostics<CR>
-nnoremap <leader>db <cmd>lua require('dap').toggle_breakpoint()<CR>
-nnoremap <leader>dc <cmd>lua require('dap').continue()<CR>
-nnoremap <leader>ha <cmd>lua require('harpoon.mark').add_file()<CR>
-nnoremap <leader>hm <cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>
-nnoremap <leader>1 <cmd>lua require('harpoon.ui').nav_file(1)<CR>
-nnoremap <leader>2 <cmd>lua require('harpoon.ui').nav_file(2)<CR>
-nnoremap <leader>z <cmd>ZenMode<CR>
-nnoremap <leader>fp <cmd>Telescope projects<CR>
-nnoremap <leader>b <cmd>BufferLinePick<CR>          " Bufferline pick buffer
-nnoremap <leader>ss <cmd>lua require('persistence').load()<CR>          " Restore session
+" === Keybindings ===
+" All keybindings are organized alphabetically by prefix within functional groups.
+
+" --- Buffer Management ---
+nnoremap <C-a> ggVG                         " Select all text in buffer
+nnoremap <leader>b <cmd>BufferLinePick<CR>  " Pick buffer from tabline
+
+" --- Commenting ---
+" gcc: Toggle line comment (Comment.nvim)
+" gc<motion>: Comment block (e.g., gcip for paragraph)
+" gc (Visual mode): Comment selected lines
+
+" --- Debugging ---
+nnoremap <leader>db <cmd>lua require('dap').toggle_breakpoint()<CR>  " Toggle breakpoint
+nnoremap <leader>dc <cmd>lua require('dap').continue()<CR>           " Start/continue debugging
+
+" --- File Explorer ---
+nnoremap <leader>n <cmd>NvimTreeToggle<CR>  " Toggle NvimTree
+
+" --- File Marking (Harpoon) ---
+nnoremap <leader>ha <cmd>lua require('harpoon.mark').add_file()<CR>      " Add file to Harpoon
+nnoremap <leader>hm <cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>  " Toggle Harpoon menu
+nnoremap <leader>1 <cmd>lua require('harpoon.ui').nav_file(1)<CR>        " Jump to first marked file
+nnoremap <leader>2 <cmd>lua require('harpoon.ui').nav_file(2)<CR>        " Jump to second marked file
+
+" --- File Navigation (Telescope) ---
+nnoremap <leader>ff <cmd>Telescope find_files<CR>  " Find files
+nnoremap <leader>fg <cmd>Telescope live_grep<CR>   " Live grep across files
+nnoremap <leader>fp <cmd>Telescope projects<CR>    " Find projects
+
+" --- Git Integration ---
+nnoremap <leader>gs <cmd>Git<CR>  " Open Git status (vim-fugitive)
+" [c: Previous hunk (gitsigns.nvim)
+" ]c: Next hunk (gitsigns.nvim)
+nnoremap <leader>hb :Gitsigns toggle_current_line_blame<CR>  " Toggle line blame
+
+" --- LSP ---
+nnoremap <leader>ca <cmd>lua vim.lsp.buf.code_action()<CR>  " Code action
+nnoremap <leader>rn <cmd>lua vim.lsp.buf.rename()<CR>      " Rename symbol
+nnoremap [d <cmd>lua vim.diagnostic.goto_prev()<CR>        " Previous diagnostic
+nnoremap ]d <cmd>lua vim.diagnostic.goto_next()<CR>        " Next diagnostic
+nnoremap gd <cmd>lua vim.lsp.buf.definition()<CR>          " Go to definition
+nnoremap K <cmd>lua vim.lsp.buf.hover()<CR>                " Hover info
+
+" --- Multiple Cursors (vim-visual-multi) ---
+" <Ctrl-N>: Start multi-cursor on word, repeat for more
+" <Ctrl-Down>: Add cursor below
+" <Ctrl-Up>: Add cursor above
+" <Tab>: Switch between cursor and selection modes
+
+" --- Session Management ---
 nnoremap <leader>sl <cmd>lua require('persistence').load({last=true})<CR>  " Restore last session
+nnoremap <leader>ss <cmd>lua require('persistence').load()<CR>            " Restore session
+
+" --- Testing (vim-test) ---
+nnoremap <leader>tf <cmd>TestFile<CR>     " Run all tests in file
+nnoremap <leader>tn <cmd>TestNearest<CR>  " Run nearest test
+nnoremap <leader>ts <cmd>TestSuite<CR>    " Run entire test suite
+
+" --- Diagnostics UI ---
+nnoremap <leader>t <cmd>Trouble diagnostics<CR>  " Open diagnostics list
+
+" --- Zen Mode ---
+nnoremap <leader>z <cmd>ZenMode<CR>  " Toggle Zen Mode

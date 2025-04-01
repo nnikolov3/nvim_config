@@ -13,9 +13,9 @@ This guide covers the keybindings and features of your Neovim setup as of your l
 
 ---
 
-## LSP (nvim-lspconfig)
-- **Purpose**: Language server support for code navigation, diagnostics, and completion.
-- **Languages**: C/C++ (`clangd`), Rust (`rust-analyzer`), Python (`pyright`).
+## LSP (nvim-lspconfig + rust-tools.nvim)
+- **Purpose**: Language server support for code navigation, diagnostics, completion, and Rust-specific enhancements.
+- **Languages**: C/C++ (`clangd`), Rust (`rust-analyzer` via `rust-tools`), Python (`pyright`).
 
 ### Hotkeys
 - `gd`: **Go to Definition** - Jump to symbol definition.
@@ -28,6 +28,7 @@ This guide covers the keybindings and features of your Neovim setup as of your l
 ### Features
 - Inline diagnostics shown via `virtual_text` and `signcolumn`.
 - LSP progress displayed in statusline (via `lualine-lsp-progress`).
+- Rust-specific features from `rust-tools.nvim`: inlay hints, advanced code actions, and tighter `rust-analyzer` integration.
 
 ---
 
@@ -40,7 +41,7 @@ This guide covers the keybindings and features of your Neovim setup as of your l
 - `<C-p>`: Previous completion item.
 
 ### Features
-- Autocompletion triggered as you type, powered by LSP sources.
+- Autocompletion triggered as you type, powered by LSP sources (enhanced for Rust via `rust-tools`).
 
 ---
 
@@ -148,7 +149,7 @@ This guide covers the keybindings and features of your Neovim setup as of your l
 - `gc` (Visual mode): Comment selected lines.
 
 ### Features
-- Treesitter-aware commenting for accurate syntax.
+- Treesitter-aware commenting for accurate syntax (supports TOML, Rust, etc.).
 
 ---
 
@@ -191,14 +192,15 @@ This guide covers the keybindings and features of your Neovim setup as of your l
 
 ## Debugging (nvim-dap)
 - **Purpose**: Debug code with breakpoints and stepping.
-- **Languages**: C/C++ (`cppdbg`), Python (`debugpy`), Rust (needs `lldb` config).
+- **Languages**: C/C++ (`cppdbg`), Python (`debugpy`), Rust (`lldb`).
 
 ### Hotkeys
 - `<Space>db`: **Toggle Breakpoint** - Add/remove breakpoint at cursor.
 - `<Space>dc`: **Continue** - Start or resume debugging.
 
 ### Features
-- Step through code, inspect variables (requires DAP server setup).
+- Step through code, inspect variables.
+- Rust debugging via LLDB (configure path to `lldb-vscode` in `init.vim`).
 
 ---
 
@@ -277,20 +279,31 @@ This guide covers the keybindings and features of your Neovim setup as of your l
 
 ---
 
+## Syntax Highlighting (nvim-treesitter)
+- **Purpose**: Advanced syntax highlighting and parsing.
+- **Languages**: C, C++, Rust, Python, TOML.
+
+### Features
+- Precise highlighting for code and config files (e.g., `Cargo.toml`).
+- Powers plugins like `Comment.nvim` for context-aware commenting.
+
+---
+
 ## Learning Tips
 1. **Explore with Which-Key**: Press `<Space>` and wait to see available bindings (via `which-key.nvim`).
 2. **Leverage Autosave**: Edit freely; `auto-save.nvim` handles saving (check statusline for confirmation).
 3. **Manage Buffers**: Use `<Space>b` to switch buffers visually with `bufferline.nvim`.
 4. **Restore Sessions**: Use `<Space>ss` or `<Space>sl` to pick up where you left off.
-5. **Practice Debugging**: Set a breakpoint (`<Space>db`), start with `<Space>dc`, explore `:Dap` commands.
-6. **Format on Save**: Test `conform.nvim` by editing and saving files.
+5. **Practice Debugging**: Set a breakpoint (`<Space>db`), start with `<Space>dc`, explore `:Dap` commands (try Rust with LLDB).
+6. **Format on Save**: Test `conform.nvim` by editing and saving files (e.g., Rust with `rustfmt`).
 7. **Multi-Cursor**: Try `<Ctrl-N>` on a repeated word, then edit all instances.
 8. **Git Workflow**: Use `<Space>gs` for status, then `:Git commit`.
+9. **Rust Tools**: Hover (`K`) over Rust code to see inlay hints or type info (via `rust-tools`).
 
 ---
 
 ## Customization
 - Adjust keybindings in `init.vim` if conflicts arise (e.g., change `<Space>t` to `<Space>d`).
-- Add DAP configs (e.g., Rust with `lldb`) in the `nvim-dap` section.
+- Update DAP paths (e.g., Rust’s `lldb-vscode` location) in the `nvim-dap` section.
 - Experiment with `mini.nvim` modules (e.g., `mini.statusline`).
 - Remove legacy `NERDTree` (`Plug 'preservim/nerdtree'`) since `nvim-tree.lua` is active.

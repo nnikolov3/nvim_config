@@ -84,6 +84,7 @@ Plug 'arkav/lualine-lsp-progress'
 Plug 'Pocco81/auto-save.nvim'           " Autosave functionality
 Plug 'akinsho/bufferline.nvim'          " Buffer tabs integration
 Plug 'folke/persistence.nvim'           " Session management
+Plug 'simrat39/rust-tools.nvim'         " Enhanced Rust support
 
 call plug#end()
 
@@ -114,6 +115,15 @@ require('lspconfig').pyright.setup {
     },
   },
 }
+require('rust-tools').setup({
+  server = {
+    settings = {
+      ["rust-analyzer"] = {
+        checkOnSave = { command = "clippy" },
+      },
+    },
+  },
+})
 EOF
 
 " === LSP Keybindings ===
@@ -130,7 +140,7 @@ lua vim.diagnostic.config({ virtual_text = true, signs = true })
 " === Treesitter Configuration ===
 lua << EOF
 require('nvim-treesitter.configs').setup {
-  ensure_installed = { "c", "cpp", "rust", "python" },
+  ensure_installed = { "c", "cpp", "rust", "python", "toml" },
   highlight = { enable = true },
 }
 EOF
@@ -261,6 +271,23 @@ dap.configurations.cpp = {
 }
 dap.configurations.c = dap.configurations.cpp
 require('dap-python').setup('python')
+dap.adapters.lldb = {
+  type = 'executable',
+  command = '/usr/bin/lldb-vscode', -- Adjust path if needed (install lldb)
+  name = 'lldb'
+}
+dap.configurations.rust = {
+  {
+    name = 'Launch',
+    type = 'lldb',
+    request = 'launch',
+    program = function()
+      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+    end,
+    cwd = '${workspaceFolder}',
+    stopOnEntry = false,
+  },
+}
 EOF
 
 " === harpoon Configuration ===

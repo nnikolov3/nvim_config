@@ -190,6 +190,35 @@ config_files_content = {
               print('LSP configured')
             end,
           },
+          -- Auto-closing brackets
+          {
+            'windwp/nvim-autopairs',
+            event = 'InsertEnter',
+            config = function()
+              require('nvim-autopairs').setup({
+                check_ts = true,
+                ts_config = {
+                  lua = { 'string', 'source' },
+                  python = { 'string', 'comment' },
+                },
+              })
+              print('nvim-autopairs configured.')
+            end,
+            dependencies = { 'nvim-treesitter/nvim-treesitter' },
+          },
+          -- Treesitter
+          {
+            'nvim-treesitter/nvim-treesitter',
+            build = ':TSUpdate',
+            config = function()
+              require('nvim-treesitter.configs').setup({
+                ensure_installed = { 'lua', 'python' },
+                highlight = { enable = true },
+                indent = { enable = true },
+              })
+              print('Treesitter configured.')
+            end,
+          },
         }, {
           checker = { enabled = true, notify = false },
           change_detection = { enabled = true, notify = true },
@@ -386,8 +415,10 @@ if __name__ == "__main__":
     print("3. Restart Neovim after plugin installation.")
     print("4. Run `:checkhealth` to diagnose any issues.")
     print("5. Run `:Mason` to verify LSP installations (e.g., lua_ls, pyright).")
-    print("6. Test the setup:")
-    print("   - Open a Lua file to check if LSP (lua_ls) works.")
+    print("6. Run `:TSUpdate` to ensure Treesitter parsers are installed.")
+    print("7. Test the setup:")
+    print("   - Open a Lua file to check if LSP (lua_ls) and Treesitter highlighting work.")
+    print("   - Open a Python file to test auto-closing brackets and Treesitter indentation.")
     print("   - Press `<leader>e` (space + e) to toggle the file explorer.")
     print("   - The Gruvbox theme should be applied automatically.")
     print("--- Enjoy your new Neovim setup! ---")
